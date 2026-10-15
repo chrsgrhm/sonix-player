@@ -966,7 +966,10 @@ static void parse_boxes(mp4_file_t *m, uint64_t start, uint64_t end, track_t *cu
 		case FOURCC('h', 'd', 'l', 'r'):
 			if (current) {
 				unsigned char b[12];
-				if (read_at(m, box.content, b, 12)) {
+				// Files QuickTime-style muxers wrote carry a second hdlr inside
+				// minf, the data handler ("dhlr", "alis"): the track is what
+				// the media handler says, not that one.
+				if (read_at(m, box.content, b, 12) && be32(b + 4) != FOURCC('d', 'h', 'l', 'r')) {
 					current->handler = be32(b + 8);
 				}
 			}
