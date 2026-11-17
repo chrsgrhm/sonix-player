@@ -8,6 +8,7 @@
 #include "src/gui/flappybird/flappybird.h"
 #include "src/gui/library/filespage.h"
 #include "src/gui/gearboy/gearboypage.h"
+#include "src/gui/r1sync/r1syncpage.h"
 #include "src/gui/shell/gridpage.h"
 #include "src/gui/shell/icons.h"
 #include "src/gui/shell/settingsrow.h"
@@ -33,13 +34,21 @@ void morepage_init(gui_config_t *cfg) {
 		// An action: the artwork is read from the resource tree on the way in.
 		{"flappy_bird", &icon_menu_flappy_bird, NULL, flappybird_open},
 		{"metronome", &icon_menu_metronome, &metronomepage_screen, NULL},
+		// r1sync: Audiobookshelf and Navidrome onto the card, from a web page.
+		// Its page says how to install it when it is not there.
+		{"r1sync", &icon_menu_wifi_transfer, &r1syncpage_screen, NULL},
 	};
 
 	// Two columns by three rows, like the Music and Wireless pages, so a tile
 	// here is exactly the size of a tile there. The grid is laid out as full
 	// even with fewer entries, so the only tile sits where it would with six --
 	// top left -- instead of floating in the middle of a page of its own.
-	gridpage_build(morepage_screen, cfg, entries, (int)(sizeof(entries) / sizeof(entries[0])), 2, 3, true);
+	lv_obj_t *grid =
+		gridpage_build(morepage_screen, cfg, entries, (int)(sizeof(entries) / sizeof(entries[0])), 2, 3, true);
+	// More than six tiles: the seventh is below, as on the Music page.
+	if (sizeof(entries) / sizeof(entries[0]) > 6) {
+		gridpage_set_scrolling(grid);
+	}
 
 	settingsrow_title(morepage_screen, cfg, "more");
 }
