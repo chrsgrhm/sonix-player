@@ -63,6 +63,8 @@
 #include "src/gui/bluetooth/btreceiverpage.h"
 #include "src/gui/audio/dacpage.h"
 #include "src/gui/audio/metronomepage.h"
+#include "src/gui/r1sync/r1syncpage.h"
+#include "src/system/net/r1syncapp.h"
 #include "src/system/bluetooth/btreceiver.h"
 #include "src/system/audio/usbdac.h"
 #include "src/system/net/wifitransfer.h"
@@ -508,7 +510,7 @@ static void key_async_cb(void *user_data) {
 	// that transport is not what the device is doing. Pressing them then does
 	// not do nothing -- it starts a local track underneath whatever is actually
 	// going on, which is worse than nothing.
-	if (usbdac_is_active() || wifitransfer_running()) {
+	if (usbdac_is_active() || wifitransfer_running() || r1syncapp_active()) {
 		return;
 	}
 	// The same while the metronome holds the output.
@@ -636,6 +638,7 @@ void gui_init(gui_config_t *cfg) {
 	gearboyplay_screen = lv_obj_create(NULL);
 	flappybird_screen = lv_obj_create(NULL);
 	metronomepage_screen = lv_obj_create(NULL);
+	r1syncpage_screen = lv_obj_create(NULL);
 
 	// Persistent topbar that stays above every screen.
 	topbar_init(cfg);
@@ -683,6 +686,7 @@ void gui_init(gui_config_t *cfg) {
 	gearboypage_init(cfg);
 	flappybird_init(cfg);
 	metronomepage_init(cfg);
+	r1syncpage_init(cfg); // after wifisettings: its "no Wi-Fi" row points there
 	// before morepage: the books tile opens the shelf, and the shelf opens the
 	// reader.
 	ebookreader_init(cfg);
